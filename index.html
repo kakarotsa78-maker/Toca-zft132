@@ -1,0 +1,1205 @@
+<!DOCTYPE html>
+<html lang="en" id="htmlRoot">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Block Plus — Mods, Shaders & Resource Packs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<style>
+  :root{
+    --bg-0:#080b10;
+    --bg-1:#0e1219;
+    --panel:#141a24;
+    --panel-2:#1a222e;
+    --panel-3:#212b39;
+    --line:#283240;
+    --line-soft:#1b2330;
+    --ink:#edf0f5;
+    --ink-dim:#8a94a8;
+    --ink-faint:#535e70;
+    --accent:#6c8cff;
+    --accent-bright:#8aa6ff;
+    --accent-soft:rgba(108,140,255,0.12);
+    --accent-ring:rgba(108,140,255,0.35);
+    --emerald:#4ee08a;
+    --emerald-bright:#7af7ac;
+    --emerald-soft:rgba(78,224,138,0.12);
+    --amber:#fbbf24;
+    --amber-soft:rgba(251,191,36,0.10);
+    --rose:#f472b6;
+    --rose-soft:rgba(244,114,182,0.10);
+    --redstone:#ff6b6b;
+    --lapis:#5b9dff;
+    --r-lg:16px;
+    --r-md:10px;
+    --r-sm:8px;
+    --shadow-card:0 12px 40px -16px rgba(0,0,0,0.6);
+    --shadow-elevated:0 24px 64px -20px rgba(0,0,0,0.7);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(1000px 500px at 10% -6%, rgba(108,140,255,0.07), transparent 60%),
+      radial-gradient(800px 500px at 95% 2%, rgba(78,224,138,0.06), transparent 55%),
+      radial-gradient(600px 400px at 50% 50%, rgba(244,114,182,0.03), transparent 50%),
+      var(--bg-0);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+  }
+  html[dir="rtl"] body{font-family:'Cairo','Inter',sans-serif;}
+  ::selection{background:var(--accent);color:#0a0f1a;}
+  a{color:inherit;}
+  button{font-family:inherit;}
+ 
+  .pixel{font-family:'Press Start 2P',monospace;letter-spacing:1px;}
+  html[dir="rtl"] .pixel{font-family:'Cairo',sans-serif;font-weight:800;letter-spacing:0;}
+  .mono{font-family:'JetBrains Mono',monospace;}
+ 
+  /* ===================== topbar ===================== */
+  header.topbar{
+    position:sticky;top:0;z-index:50;
+    background:rgba(8,11,16,0.72);
+    backdrop-filter:blur(16px) saturate(150%);
+    border-bottom:1px solid var(--line-soft);
+    display:flex;align-items:center;justify-content:space-between;
+    gap:18px;
+    padding:14px 32px;
+    flex-wrap:wrap;
+  }
+  .brand{display:flex;align-items:center;gap:12px;}
+  .brand-mark{
+    width:36px;height:36px;flex:none;border-radius:10px;
+    background:linear-gradient(135deg, var(--accent) 0%, #4a5fc0 50%, #6c8cff 100%);
+    box-shadow:0 4px 16px -4px rgba(108,140,255,0.45);
+    position:relative;overflow:hidden;
+  }
+  .brand-mark::after{
+    content:"";position:absolute;inset:0;
+    background:linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 50%);
+    border-radius:inherit;
+  }
+  .brand-mark .plus-mark{
+    position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    z-index:1;font-size:20px;font-weight:800;color:rgba(255,255,255,0.92);
+    text-shadow:0 1px 3px rgba(0,0,0,0.3);
+  }
+  .brand-name{font-size:15px;font-weight:800;letter-spacing:-0.3px;background:linear-gradient(90deg,var(--ink),var(--ink-dim));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+  .brand-sub{font-size:11px;color:var(--ink-faint);margin-top:2px;letter-spacing:0.1px;}
+ 
+  .topbar-right{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+ 
+  nav.tabs{
+    display:flex;gap:2px;background:var(--panel);padding:3px;border-radius:12px;
+    border:1px solid var(--line);box-shadow:0 1px 3px rgba(0,0,0,0.2) inset;
+  }
+  .tab-btn{
+    background:transparent;border:none;
+    color:var(--ink-dim);font-weight:600;font-size:12.5px;
+    padding:7px 16px;cursor:pointer;border-radius:9px;
+    transition:all .2s ease;position:relative;
+  }
+  .tab-btn:hover{color:var(--ink);background:rgba(255,255,255,0.04);}
+  .tab-btn.active{
+    color:#0a0f1a;background:var(--accent);
+    box-shadow:0 2px 12px -2px rgba(108,140,255,0.5);
+  }
+ 
+  .lang-switch{
+    display:flex;gap:2px;background:var(--panel);padding:3px;border-radius:10px;
+    border:1px solid var(--line);
+  }
+  .lang-btn{
+    background:transparent;border:none;color:var(--ink-faint);font-size:11px;font-weight:700;
+    padding:6px 12px;cursor:pointer;border-radius:7px;transition:all .2s ease;
+    letter-spacing:0.3px;
+  }
+  .lang-btn:hover{color:var(--ink);}
+  .lang-btn.active{background:var(--accent-soft);color:var(--accent-bright);}
+ 
+  .google-auth{display:flex;align-items:center;}
+  .g-sign-in{
+    background:transparent;border:1px solid var(--line);color:var(--ink-dim);
+    font-size:11.5px;font-weight:600;padding:6px 14px;border-radius:20px;
+    cursor:pointer;transition:all .2s ease;white-space:nowrap;
+    display:flex;align-items:center;gap:6px;
+  }
+  .g-sign-in::before{
+    content:"";display:inline-block;width:16px;height:16px;
+    background:url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path fill="%23FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"/><path fill="%23FF3D00" d="m6.306 14.691 6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 16.318 4 9.656 8.337 6.306 14.691z"/><path fill="%234CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238A11.91 11.91 0 0 1 24 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z"/><path fill="%231976D2" d="M43.611 20.083H42V20H24v8h11.303a12.04 12.04 0 0 1-4.087 5.571l.003-.002 6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917z"/></svg>');
+    background-size:contain;flex:none;
+  }
+  .g-sign-in:hover{border-color:var(--ink-dim);color:var(--ink);background:var(--panel-2);}
+  .g-user{display:flex;align-items:center;gap:8px;}
+  .g-avatar{width:28px;height:28px;border-radius:50%;border:1px solid var(--line);object-fit:cover;}
+  .g-name{font-size:12px;font-weight:600;color:var(--ink);max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .g-sign-out{
+    background:transparent;border:1px solid var(--line);color:var(--ink-faint);
+    width:24px;height:24px;border-radius:50%;cursor:pointer;
+    font-size:11px;display:flex;align-items:center;justify-content:center;
+    transition:all .15s ease;padding:0;line-height:1;
+  }
+  .g-sign-out:hover{border-color:var(--redstone);color:var(--redstone);background:rgba(255,107,107,0.08);}
+  .source-pills{display:flex;gap:6px;}
+  .source-pill{
+    font-size:10px;padding:5px 11px;border:1px solid var(--line);
+    border-radius:20px;color:var(--ink-faint);white-space:nowrap;
+    background:var(--panel);
+  }
+ 
+  /* ===================== hero ===================== */
+  .hero{
+    padding:80px 28px 52px;
+    max-width:880px;margin:0 auto;
+    text-align:center;
+    position:relative;
+  }
+  .hero-eyebrow{
+    display:inline-flex;align-items:center;gap:8px;
+    color:var(--amber);font-size:11px;letter-spacing:1.8px;text-transform:uppercase;
+    margin-bottom:22px;font-weight:700;
+    padding:6px 16px;border:1px solid var(--amber-soft);
+    border-radius:20px;background:var(--amber-soft);
+  }
+  html[dir="rtl"] .hero-eyebrow{letter-spacing:0;}
+  .hero h1{
+    font-size:clamp(30px,5vw,52px);
+    line-height:1.12;margin:0 0 18px;font-weight:800;
+    letter-spacing:-1.2px;
+  }
+  html[dir="rtl"] .hero h1{letter-spacing:0;font-weight:800;}
+  .hero h1 .accent{
+    background:linear-gradient(135deg, var(--accent) 0%, var(--accent-bright) 40%, var(--emerald) 100%);
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  }
+  .hero p.lede{
+    color:var(--ink-dim);font-size:16px;max-width:560px;margin:0 auto 34px;
+    line-height:1.7;
+  }
+ 
+  /* signature search element */
+  .craft-bar{
+    display:grid;
+    grid-template-columns: 52px 1fr auto;
+    gap:6px;
+    max-width:660px;margin:0 auto;
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:var(--r-lg);
+    padding:7px;
+    box-shadow:var(--shadow-card);
+    transition:border-color .2s ease, box-shadow .2s ease;
+  }
+  .craft-bar:focus-within{
+    border-color:rgba(108,140,255,0.4);
+    box-shadow:0 0 0 3px rgba(108,140,255,0.08), var(--shadow-card);
+  }
+  .craft-slot{
+    background:var(--panel-2);
+    border:1px solid var(--line);
+    border-radius:var(--r-md);
+    display:flex;align-items:center;justify-content:center;
+    font-size:17px;
+  }
+  .craft-bar input{
+    background:transparent;
+    border:none;
+    color:var(--ink);
+    font-size:15px;
+    padding:0 10px;
+    border-radius:var(--r-md);
+    outline:none;
+    width:100%;
+  }
+  .craft-bar input::placeholder{color:var(--ink-faint);}
+  .craft-go{
+    background:linear-gradient(135deg, var(--accent) 0%, #4a5fc0 100%);
+    color:#fff;border:none;
+    font-weight:700;font-size:13px;padding:0 26px;
+    cursor:pointer;border-radius:var(--r-md);
+    transition:transform .15s ease, box-shadow .15s ease;
+    box-shadow:0 2px 12px -2px rgba(108,140,255,0.35);
+  }
+  .craft-go:hover{box-shadow:0 4px 20px -2px rgba(108,140,255,0.5);}
+  .craft-go:active{transform:scale(0.97);}
+ 
+  .filter-row{
+    display:flex;gap:6px;justify-content:center;flex-wrap:wrap;
+    margin-top:20px;
+  }
+  .category-row{margin-top:8px;}
+  .category-row .filter-chip{font-size:11px;padding:5px 13px;}
+  .category-row .filter-chip.active{background:var(--emerald);border-color:var(--emerald);color:#06120c;}
+  .filter-chip{
+    font-size:12px;color:var(--ink-faint);
+    border:1px solid var(--line);
+    padding:6px 16px;border-radius:20px;cursor:pointer;
+    background:var(--panel);
+    transition:all .2s ease;
+    font-weight:500;
+  }
+  .filter-chip:hover{border-color:var(--ink-dim);color:var(--ink);background:var(--panel-2);}
+  .filter-chip.active{
+    color:#fff;background:var(--accent);border-color:var(--accent);font-weight:700;
+    box-shadow:0 2px 12px -2px rgba(108,140,255,0.4);
+  }
+ 
+  /* ===================== main / results ===================== */
+  main{
+    max-width:1200px;margin:0 auto;padding:8px 32px 90px;
+  }
+  .results-meta{
+    display:flex;justify-content:space-between;align-items:center;
+    margin:36px 0 22px;color:var(--ink-dim);font-size:13px;
+    flex-wrap:wrap;gap:10px;
+  }
+  .results-meta strong{color:var(--ink);font-weight:700;}
+
+ 
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(290px,1fr));
+    gap:14px;
+  }
+ 
+  .card{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:var(--r-lg);
+    padding:18px;
+    display:flex;gap:14px;
+    transition:border-color .25s ease, transform .25s ease, background .25s ease, box-shadow .25s ease;
+    text-decoration:none;
+    color:var(--ink);
+    position:relative;
+    overflow:hidden;
+  }
+  .card::before{
+    content:"";position:absolute;top:0;left:0;right:0;height:2px;
+    background:linear-gradient(90deg, var(--accent), var(--emerald) 50%, transparent 80%);
+    opacity:0;transition:opacity .25s ease;
+  }
+  .card:hover{
+    border-color:rgba(108,140,255,0.35);
+    transform:translateY(-4px);
+    background:var(--panel-2);
+    box-shadow:0 16px 40px -16px rgba(0,0,0,0.6);
+  }
+  .card:hover::before{opacity:1;}
+  .card-icon{
+    width:54px;height:54px;flex:none;
+    border-radius:var(--r-sm);
+    background:var(--panel-3);
+    object-fit:cover;
+    border:1px solid var(--line);
+    transition:transform .25s ease;
+  }
+  .card:hover .card-icon{transform:scale(1.05);}
+  .card-body{min-width:0;flex:1;}
+  .card-title{font-weight:700;font-size:14.5px;margin:0 0 5px;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .card-desc{
+    font-size:12.5px;color:var(--ink-dim);
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;
+    overflow:hidden;margin:0 0 11px;line-height:1.55;
+  }
+  .card-meta{display:flex;gap:10px;font-size:11px;color:var(--ink-faint);flex-wrap:wrap;align-items:center;}
+  .tag-src{
+    font-size:9.5px;font-weight:700;letter-spacing:0.5px;
+    padding:3px 8px;border-radius:6px;
+  }
+  .tag-modrinth{background:var(--emerald-soft);color:var(--emerald);}
+  .tag-curseforge{background:var(--rose-soft);color:var(--rose);}
+ 
+  .empty, .loading, .error{
+    text-align:center;padding:80px 20px;color:var(--ink-dim);
+  }
+  .error{color:var(--redstone);}
+  .spinner{
+    width:28px;height:28px;margin:0 auto 16px;
+    border:3px solid var(--line);border-top-color:var(--accent);
+    border-radius:50%;
+    animation:spin 0.7s linear infinite;
+  }
+  @keyframes spin{to{transform:rotate(360deg);}}
+ 
+  .load-more{
+    display:block;margin:34px auto 0;
+    background:var(--panel);border:1px solid var(--line);
+    color:var(--ink);padding:12px 30px;border-radius:var(--r-md);
+    cursor:pointer;font-size:13px;font-weight:600;
+    transition:all .2s ease;
+  }
+  .load-more:hover{border-color:var(--accent);color:var(--accent-bright);background:var(--panel-2);}
+ 
+
+ 
+  footer{
+    border-top:1px solid var(--line-soft);
+    padding:32px 28px;text-align:center;color:var(--ink-faint);font-size:12px;line-height:1.7;
+  }
+  footer a{color:var(--accent);text-decoration:none;transition:color .15s;}
+  footer a:hover{color:var(--accent-bright);}
+ 
+  @media (max-width:760px){
+    header.topbar{justify-content:center;padding:14px 18px;}
+    .topbar-right{width:100%;justify-content:space-between;}
+    .hero{padding:56px 18px 34px;}
+    main{padding:8px 18px 70px;}
+  }
+ 
+  /* ===================== download button ===================== */
+  .download-btn{
+    margin-top:10px;
+    background:linear-gradient(135deg, var(--accent) 0%, #4a5fc0 100%);
+    color:#fff;border:none;
+    font-weight:700;font-size:11px;
+    padding:7px 18px;cursor:pointer;border-radius:var(--r-sm);
+    transition:transform .15s ease, box-shadow .15s ease;
+    display:inline-block;
+    box-shadow:0 2px 10px -2px rgba(108,140,255,0.3);
+  }
+  .download-btn:hover{box-shadow:0 4px 16px -2px rgba(108,140,255,0.5);}
+  .download-btn:active{transform:scale(0.96);}
+ 
+  /* ===================== download modal ===================== */
+  .modal-overlay{
+    display:none;
+    position:fixed;inset:0;z-index:999;
+    background:rgba(0,0,0,0.7);
+    backdrop-filter:blur(8px);
+    align-items:center;justify-content:center;
+    animation:fadeIn .2s ease;
+  }
+  @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+  .modal-overlay.open{display:flex;}
+  .modal-panel{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:var(--r-lg);
+    width:420px;max-width:92vw;
+    box-shadow:var(--shadow-elevated);
+    overflow:hidden;
+    display:flex;flex-direction:column;
+    animation:slideUp .25s ease;
+  }
+  @keyframes slideUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+  .modal-header{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:16px 22px;
+    border-bottom:1px solid var(--line-soft);
+  }
+  .modal-title{font-size:12px;letter-spacing:0.5px;}
+  .modal-close{
+    background:transparent;border:none;color:var(--ink-faint);
+    font-size:24px;cursor:pointer;line-height:1;padding:0;width:28px;height:28px;
+    display:flex;align-items:center;justify-content:center;
+    border-radius:6px;transition:all .15s ease;
+  }
+  .modal-close:hover{color:var(--ink);background:var(--panel-2);}
+  .modal-body{padding:20px 22px;display:flex;flex-direction:column;gap:16px;}
+  .modal-info{
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+    font-weight:600;font-size:14px;
+  }
+  .modal-field{display:flex;flex-direction:column;gap:6px;}
+  .modal-field label{
+    font-size:11.5px;font-weight:600;color:var(--ink-dim);
+    text-transform:uppercase;letter-spacing:0.5px;
+  }
+  .modal-field select{
+    background:var(--panel-2);border:1px solid var(--line);
+    color:var(--ink);padding:10px 12px;border-radius:var(--r-sm);
+    font-size:13px;outline:none;cursor:pointer;
+    font-family:inherit;transition:border-color .2s ease;
+  }
+  .modal-field select:focus{border-color:var(--accent);}
+  .modal-field select:disabled{opacity:0.4;cursor:not-allowed;}
+  .modal-file-info{
+    font-size:12px;color:var(--ink-dim);
+    min-height:20px;
+  }
+  .modal-footer{
+    display:flex;gap:10px;justify-content:flex-end;
+    padding:14px 22px;
+    border-top:1px solid var(--line-soft);
+  }
+  .modal-btn-secondary{
+    background:transparent;border:1px solid var(--line);
+    color:var(--ink-dim);padding:9px 20px;border-radius:var(--r-sm);
+    cursor:pointer;font-weight:600;font-size:12.5px;
+    transition:all .15s ease;
+  }
+  .modal-btn-secondary:hover{border-color:var(--ink-dim);color:var(--ink);background:var(--panel-2);}
+  .modal-btn-primary{
+    background:linear-gradient(135deg, var(--accent) 0%, #4a5fc0 100%);
+    color:#fff;border:none;
+    padding:9px 22px;border-radius:var(--r-sm);
+    cursor:pointer;font-weight:700;font-size:12.5px;
+    transition:opacity .15s ease, transform .15s ease;
+    box-shadow:0 2px 12px -2px rgba(108,140,255,0.3);
+  }
+  .modal-btn-primary:hover{box-shadow:0 4px 18px -2px rgba(108,140,255,0.5);}
+  .modal-btn-primary:active{transform:scale(0.97);}
+  .modal-btn-primary:disabled{opacity:0.4;cursor:not-allowed;box-shadow:none;}
+  .modal-spinner{
+    display:flex;align-items:center;justify-content:center;gap:10px;
+    padding:20px;font-size:12.5px;color:var(--ink-dim);
+  }
+  .modal-spinner .spinner{width:20px;height:20px;margin:0;border-width:2px;}
+ 
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0s!important;transition-duration:0s!important;}
+  }
+</style>
+</head>
+<body>
+ 
+<header class="topbar">
+  <div class="brand">
+    <div class="brand-mark"><span class="plus-mark">+</span></div>
+    <div>
+      <div class="brand-name" data-i18n="brandName">Block Plus</div>
+      <div class="brand-sub" data-i18n="brandSub">mods · shaders · resource packs</div>
+    </div>
+  </div>
+  <nav class="tabs">
+    <button class="tab-btn active" data-type="mod" data-i18n="tabMods">Mods</button>
+    <button class="tab-btn" data-type="shader" data-i18n="tabShaders">Shaders</button>
+    <button class="tab-btn" data-type="resourcepack" data-i18n="tabPacks">Resource Packs</button>
+  </nav>
+  <div class="topbar-right">
+    <div class="source-pills">
+      <span class="source-pill" data-i18n="pillModrinth">Modrinth: live</span>
+      <span class="source-pill" id="cfPill" data-i18n="pillCfOn">CurseForge: live</span>
+    </div>
+    <div class="google-auth" id="googleAuth">
+      <button class="g-sign-in" id="gSignInBtn" data-i18n="signIn">Sign in with Google</button>
+      <div class="g-user" id="gUser" style="display:none">
+        <img class="g-avatar" id="gAvatar" alt="" />
+        <span class="g-name" id="gName"></span>
+        <button class="g-sign-out" id="gSignOutBtn" data-i18n="signOut">✕</button>
+      </div>
+    </div>
+    <div class="lang-switch">
+      <button class="lang-btn active" id="btnEn">EN</button>
+      <button class="lang-btn" id="btnAr">AR</button>
+    </div>
+  </div>
+</header>
+ 
+<section class="hero">
+  <div class="hero-eyebrow" data-i18n="eyebrow">Search Modrinth · Connect CurseForge</div>
+  <h1 data-i18n-html="heroTitle">Every block of the build, <span class="accent">in one chest.</span></h1>
+  <p class="lede" data-i18n="heroLede">Search live mods, shaders, and resource packs straight from Modrinth's API. Drop in your own CurseForge API key to pull results from there too.</p>
+ 
+  <div class="craft-bar">
+    <div class="craft-slot">⛏</div>
+    <input id="searchInput" type="text" data-i18n-placeholder="searchPlaceholder" placeholder="Search for a mod, shader or resource pack…" />
+    <button class="craft-go" id="searchBtn" data-i18n="searchBtn">Craft Search</button>
+  </div>
+ 
+  <div class="filter-row" id="loaderFilters">
+    <button class="filter-chip active" data-loader="" data-i18n="filterAll">All loaders</button>
+    <button class="filter-chip" data-loader="fabric">Fabric</button>
+    <button class="filter-chip" data-loader="forge">Forge</button>
+    <button class="filter-chip" data-loader="quilt">Quilt</button>
+    <button class="filter-chip" data-loader="iris" data-i18n="filterIris">Iris</button>
+    <button class="filter-chip" data-loader="neoforge">NeoForge</button>
+    <button class="filter-chip" data-loader="rift">Rift</button>
+    <button class="filter-chip" data-loader="liteloader">LiteLoader</button>
+    <button class="filter-chip" data-loader="modloader">ModLoader</button>
+  </div>
+
+  <div class="filter-row category-row" id="categoryFilters">
+    <button class="filter-chip active" data-category="" data-i18n="catAll">All</button>
+    <button class="filter-chip" data-category="adventure">Adventure</button>
+    <button class="filter-chip" data-category="cursed">Cursed</button>
+    <button class="filter-chip" data-category="decoration">Decoration</button>
+    <button class="filter-chip" data-category="equipment">Equipment</button>
+    <button class="filter-chip" data-category="food">Food</button>
+    <button class="filter-chip" data-category="magic">Magic</button>
+    <button class="filter-chip" data-category="optimization">Optimization</button>
+    <button class="filter-chip" data-category="storage">Storage</button>
+    <button class="filter-chip" data-category="technology">Technology</button>
+    <button class="filter-chip" data-category="utility">Utility</button>
+  </div>
+</section>
+ 
+<main>
+  <div class="results-meta">
+    <div><strong id="resultCount">—</strong> <span data-i18n="resultsFor">results for</span> <span id="resultType" class="mono">mods</span></div>
+  </div>
+ 
+  <div id="resultsArea">
+    <div class="loading"><div class="spinner"></div><span data-i18n="loadingText">Loading from Modrinth…</span></div>
+  </div>
+ 
+  <button class="load-more" id="loadMoreBtn" style="display:none;" data-i18n="loadMore">Load more</button>
+</main>
+
+<!-- ===================== Download Modal ===================== -->
+<div class="modal-overlay" id="downloadModal">
+  <div class="modal-panel">
+    <div class="modal-header">
+      <span class="modal-title pixel" id="modalTitle">Download</span>
+      <button class="modal-close" id="modalCloseBtn">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-info">
+        <span id="modalProjectName"></span>
+        <span class="tag-src" id="modalProjectSource"></span>
+      </div>
+      <div class="modal-field">
+        <label data-i18n="modalGameVersion">Game Version</label>
+        <select id="modalGameVersion"></select>
+      </div>
+      <div class="modal-field">
+        <label data-i18n="modalLoader">Loader</label>
+        <select id="modalLoader"></select>
+      </div>
+      <div id="modalFileInfo" class="modal-file-info"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-btn-secondary" id="modalCancelBtn" data-i18n="modalCancel">Cancel</button>
+      <button class="modal-btn-primary" id="modalDownloadBtn" data-i18n="modalDownload">Download</button>
+    </div>
+    <div class="modal-spinner" id="modalSpinner">
+      <div class="spinner"></div>
+      <span data-i18n="modalFetching">Fetching versions…</span>
+    </div>
+  </div>
+</div>
+ 
+<footer>
+  <span data-i18n="footerText">Built on the</span>
+  <a href="https://docs.modrinth.com/" target="_blank">Modrinth API</a>
+  <span data-i18n="footerAnd">and the</span>
+  <a href="https://docs.curseforge.com/" target="_blank">CurseForge API</a>.
+  <span data-i18n="footerDisclaimer">Not affiliated with Mojang, Microsoft, Modrinth, or Overwolf.</span>
+</footer>
+ 
+<script>
+(function(){
+  /* ============================================================
+     HARDCODED CURSEFORGE API KEY (hidden from UI)
+     ============================================================ */
+  const CF_API_KEY = "$2a$10$sBNnKyKvTVFPcw/Wco1y.uYIz6IxCnwWUHJ/0hPBuMbH/0tbgXHw.";
+ 
+  const STR = {
+    en: {
+      brandName: 'Block Plus',
+      brandSub: 'mods · shaders · resource packs',
+      tabMods: 'Mods',
+      tabShaders: 'Shaders',
+      tabPacks: 'Resource Packs',
+      pillModrinth: 'Modrinth: live',
+      pillCfOff: 'CurseForge: needs key',
+      pillCfOn: 'CurseForge: live',
+      eyebrow: 'Search Modrinth · Connect CurseForge',
+      heroTitleHtml: 'Every block of the build, <span class="accent">in one chest.</span>',
+      heroLede: "Search live mods, shaders, and resource packs straight from Modrinth's API. Results from CurseForge are also included via a pre-configured key.",
+      searchPlaceholder: 'Search for a mod, shader or resource pack…',
+      searchBtn: 'Craft Search',
+      filterAll: 'All loaders',
+      filterIris: 'Iris (shaders)',
+      catAll: 'All',
+      resultsFor: 'results for',
+      loadingText: 'Loading from Modrinth…',
+      loadingTextBoth: 'Loading from Modrinth and CurseForge…',
+      loadMore: 'Load more',
+      empty: 'No results. Try a different search term or filter.',
+      errorPrefix: "Couldn't load results —",
+      errorSuffix: 'Try again in a moment.',
+      footerText: 'Built on the',
+      footerAnd: 'and the',
+      footerDisclaimer: 'Not affiliated with Mojang, Microsoft, Modrinth, or Overwolf.',
+      typeMods: 'mods', typeShaders: 'shaders', typePacks: 'resource packs',
+      byAuthor: 'by',
+      downloadBtn: 'Download',
+      modalTitle: 'Download',
+      modalGameVersion: 'Game Version',
+      modalLoader: 'Loader',
+      modalCancel: 'Cancel',
+      modalDownload: 'Download',
+      modalFetching: 'Fetching versions…',
+      modalNoVersion: 'No versions match your selection.',
+      modalStart: 'Start Download',
+      modalDownloading: 'Downloading…',
+      modalError: 'Failed to fetch versions.',
+      modalVersionCount: '{n} version(s) available',
+      signIn: 'Sign in with Google',
+      signOut: 'Sign out'
+    },
+    ar: {
+      brandName: 'بلوك بلس',
+      brandSub: 'مودات · شيدرات · حزم موارد',
+      tabMods: 'المودات',
+      tabShaders: 'الشيدرات',
+      tabPacks: 'حزم الموارد',
+      pillModrinth: 'مودرينث: مباشر',
+      pillCfOff: 'كيرس فورج: يحتاج مفتاح',
+      pillCfOn: 'كيرس فورج: مباشر',
+      eyebrow: 'بحث في مودرينث · ربط كيرس فورج',
+      heroTitleHtml: 'كل قطعة في عالمك، <span class="accent">في صندوق واحد.</span>',
+      heroLede: 'ابحث عن مودات وشيدرات وحزم موارد مباشرة من واجهة Modrinth. نتائج CurseForge متضمنة أيضًا عبر مفتاح مهيّأ مسبقًا.',
+      searchPlaceholder: 'ابحث عن مود أو شيدر أو حزمة موارد…',
+      searchBtn: 'بحث الصياغة',
+      filterAll: 'كل المحمّلات',
+      filterIris: 'آيريس (شيدرات)',
+      catAll: 'الكل',
+      resultsFor: 'نتيجة لـ',
+      loadingText: 'جارٍ التحميل من Modrinth…',
+      loadingTextBoth: 'جارٍ التحميل من Modrinth وCurseForge…',
+      loadMore: 'عرض المزيد',
+      empty: 'لا توجد نتائج. جرّب كلمة بحث أو فلتر مختلف.',
+      errorPrefix: 'تعذّر تحميل النتائج —',
+      errorSuffix: 'حاول مرة أخرى بعد قليل.',
+      footerText: 'مبني على',
+      footerAnd: 'و',
+      footerDisclaimer: 'غير مرتبط بـ Mojang أو Microsoft أو Modrinth أو Overwolf.',
+      typeMods: 'مودات', typeShaders: 'شيدرات', typePacks: 'حزم موارد',
+      byAuthor: 'بواسطة',
+      downloadBtn: 'تحميل',
+      modalTitle: 'تحميل',
+      modalGameVersion: 'إصدار اللعبة',
+      modalLoader: 'المحمّل',
+      modalCancel: 'إلغاء',
+      modalDownload: 'تحميل',
+      modalFetching: 'جارٍ جلب الإصدارات…',
+      modalNoVersion: 'لا توجد إصدارات تطابق اختيارك.',
+      modalStart: 'بدء التحميل',
+      modalDownloading: 'جارٍ التحميل…',
+      modalError: 'فشل في جلب الإصدارات.',
+      modalVersionCount: '{n} إصدار(ات) متاحة',
+      signIn: 'تسجيل الدخول بـ Google',
+      signOut: 'تسجيل الخروج'
+    }
+  };
+ 
+  let lang = 'en';
+ 
+  function applyLang(){
+    const t = STR[lang];
+    document.getElementById('htmlRoot').lang = lang;
+    document.getElementById('htmlRoot').dir = lang === 'ar' ? 'rtl' : 'ltr';
+ 
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      if (t[key] !== undefined) el.textContent = t[key];
+    });
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+      const key = el.getAttribute('data-i18n-placeholder');
+      if (t[key] !== undefined) el.placeholder = t[key];
+    });
+    const heroTitleEl = document.querySelector('[data-i18n-html="heroTitle"]');
+    if (heroTitleEl) heroTitleEl.innerHTML = t.heroTitleHtml;
+ 
+    document.getElementById('btnEn').classList.toggle('active', lang === 'en');
+    document.getElementById('btnAr').classList.toggle('active', lang === 'ar');
+ 
+    cfPill.textContent = t.pillCfOn;
+    cfPill.style.color = 'var(--emerald)';
+ 
+    const typeLabel = state.type === 'mod' ? t.typeMods : state.type === 'shader' ? t.typeShaders : t.typePacks;
+    resultType.textContent = typeLabel;
+ 
+    renderResults();
+  }
+ 
+  document.getElementById('btnEn').addEventListener('click', () => { lang = 'en'; applyLang(); });
+  document.getElementById('btnAr').addEventListener('click', () => { lang = 'ar'; applyLang(); });
+ 
+  const CF_PROXY_URL = "";
+ 
+  const state = {
+    type: 'mod',
+    loader: '',
+    category: '',
+    query: '',
+    offset: 0,
+    limit: 20,
+    total: 0,
+    accum: [],
+    cfKey: CF_API_KEY
+  };
+  
+  const resultsArea = document.getElementById('resultsArea');
+  const resultCount = document.getElementById('resultCount');
+  const resultType = document.getElementById('resultType');
+  const loadMoreBtn = document.getElementById('loadMoreBtn');
+  const cfPill = document.getElementById('cfPill');
+ 
+  /* ===================== Download Modal ===================== */
+  const modal = document.getElementById('downloadModal');
+  const modalTitle = document.getElementById('modalTitle');
+  const modalProjectName = document.getElementById('modalProjectName');
+  const modalProjectSource = document.getElementById('modalProjectSource');
+  const modalGameVersion = document.getElementById('modalGameVersion');
+  const modalLoader = document.getElementById('modalLoader');
+  const modalFileInfo = document.getElementById('modalFileInfo');
+  const modalSpinner = document.getElementById('modalSpinner');
+  const modalDownloadBtn = document.getElementById('modalDownloadBtn');
+  const modalCancelBtn = document.getElementById('modalCancelBtn');
+  const modalCloseBtn = document.getElementById('modalCloseBtn');
+ 
+  let modalProjectData = null;
+  let modalVersionsCache = null;
+  let modalSourceType = null;
+ 
+  function openDownloadModal(item){
+    modalProjectData = item;
+    modalSourceType = item.source;
+    modalVersionsCache = null;
+    const t = STR[lang];
+    modalTitle.textContent = t.modalTitle;
+    modalProjectName.textContent = item.title;
+    modalProjectSource.textContent = item.source === 'modrinth' ? 'MODRINTH' : 'CURSEFORGE';
+    modalProjectSource.className = 'tag-src ' + (item.source === 'modrinth' ? 'tag-modrinth' : 'tag-curseforge');
+    modalGameVersion.innerHTML = '<option value="">' + t.modalGameVersion + '…</option>';
+    modalLoader.innerHTML = '<option value="">' + t.modalLoader + '…</option>';
+    modalFileInfo.textContent = '';
+    modalDownloadBtn.textContent = t.modalDownload;
+    modalDownloadBtn.disabled = false;
+    modalSpinner.style.display = 'block';
+    modal.classList.add('open');
+    modalGameVersion.disabled = true;
+    modalLoader.disabled = true;
+ 
+    fetchVersions(item).then(versions => {
+      modalSpinner.style.display = 'none';
+      modalVersionsCache = versions;
+      if (!versions || versions.length === 0) {
+        modalFileInfo.textContent = t.modalNoVersion;
+        modalDownloadBtn.disabled = true;
+        return;
+      }
+ 
+      const allGameVersions = new Set();
+      const allLoaders = new Set();
+      versions.forEach(v => {
+        (v.game_versions || []).forEach(gv => allGameVersions.add(gv));
+        (v.loaders || []).forEach(l => allLoaders.add(l));
+      });
+ 
+  const validVersions = [...allGameVersions].filter(v => /^\d+\.\d+(\.\d+)?$/.test(v));
+      const sortedVersions = sortGameVersions(validVersions);
+      const sortedLoaders = [...allLoaders].sort();
+
+      modalGameVersion.innerHTML = '<option value="">' + (t.modalGameVersion) + '…</option>';
+      if (sortedVersions.length === 0) modalGameVersion.innerHTML = '<option value="">' + t.modalNoVersion + '</option>';
+      sortedVersions.forEach(gv => {
+        const opt = document.createElement('option');
+        opt.value = gv;
+        opt.textContent = gv;
+        modalGameVersion.appendChild(opt);
+      });
+ 
+      modalLoader.innerHTML = '<option value="">' + (t.modalLoader) + '…</option>';
+      if (sortedLoaders.length === 0) modalLoader.innerHTML = '<option value="">' + t.modalNoVersion + '</option>';
+      sortedLoaders.forEach(l => {
+        const opt = document.createElement('option');
+        opt.value = l;
+        opt.textContent = l.charAt(0).toUpperCase() + l.slice(1);
+        modalLoader.appendChild(opt);
+      });
+ 
+      modalGameVersion.disabled = false;
+      modalLoader.disabled = false;
+      updateModalFileInfo(t);
+    }).catch(() => {
+      modalSpinner.style.display = 'none';
+      modalFileInfo.textContent = STR[lang].modalError;
+      modalDownloadBtn.disabled = true;
+    });
+  }
+ 
+  async function fetchVersions(item){
+    if (item.source === 'modrinth') {
+      const res = await fetch(`https://api.modrinth.com/v2/project/${item.id}/version`);
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const data = await res.json();
+      return data.map(v => ({
+        game_versions: v.game_versions,
+        loaders: v.loaders,
+        files: v.files
+      }));
+    } else {
+      const res = await fetch(`https://api.curseforge.com/v1/mods/${item.id}/files`, {
+        headers: { 'x-api-key': CF_API_KEY, 'Accept': 'application/json' }
+      });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const data = await res.json();
+      return (data.data || []).map(f => ({
+        game_versions: f.gameVersions || [],
+        loaders: (f.gameVersions || []).filter(gv => ['Fabric','Forge','Quilt','Rift'].includes(gv)),
+        files: [{
+          url: f.downloadUrl,
+          filename: f.fileName || f.displayName + '.jar'
+        }]
+      }));
+    }
+  }
+ 
+  function sortGameVersions(versions){
+    const parts = v => {
+      const m = v.match(/^(\d+)\.(\d+)(?:\.(\d+))?/);
+      return m ? [parseInt(m[1]), parseInt(m[2]), parseInt(m[3] || '0')] : [0,0,0];
+    };
+    return versions.sort((a, b) => {
+      const pa = parts(a), pb = parts(b);
+      for (let i = 0; i < 3; i++) {
+        if (pa[i] !== pb[i]) return pb[i] - pa[i];
+      }
+      return 0;
+    });
+  }
+ 
+  function updateModalFileInfo(t){
+    const selVersion = modalGameVersion.value;
+    const selLoader = modalLoader.value;
+    if (!selVersion && !selLoader) {
+      modalFileInfo.textContent = '';
+      modalDownloadBtn.textContent = t.modalDownload;
+      modalDownloadBtn.disabled = false;
+      return;
+    }
+    const matches = (modalVersionsCache || []).filter(v => {
+      const gvMatch = !selVersion || (v.game_versions || []).includes(selVersion);
+      const lMatch = !selLoader || (v.loaders || []).includes(selLoader);
+      return gvMatch && lMatch;
+    });
+    if (matches.length === 0) {
+      modalFileInfo.textContent = t.modalNoVersion;
+      modalDownloadBtn.disabled = true;
+    } else {
+      modalFileInfo.textContent = t.modalVersionCount.replace('{n}', matches.length);
+      modalDownloadBtn.textContent = t.modalStart;
+      modalDownloadBtn.disabled = false;
+    }
+  }
+ 
+  modalGameVersion.addEventListener('change', () => updateModalFileInfo(STR[lang]));
+  modalLoader.addEventListener('change', () => updateModalFileInfo(STR[lang]));
+ 
+  modalDownloadBtn.addEventListener('click', () => {
+    const t = STR[lang];
+    const selVersion = modalGameVersion.value;
+    const selLoader = modalLoader.value;
+    const matches = (modalVersionsCache || []).filter(v => {
+      const gvMatch = !selVersion || (v.game_versions || []).includes(selVersion);
+      const lMatch = !selLoader || (v.loaders || []).includes(selLoader);
+      return gvMatch && lMatch;
+    });
+    if (matches.length === 0) return;
+    const version = matches[0];
+    if (!version.files || version.files.length === 0) return;
+    const file = version.files[0];
+    if (file.url) {
+      closeModal();
+    }
+  });
+ 
+  function closeModal(){
+    modal.classList.remove('open');
+  }
+  modalCloseBtn.addEventListener('click', closeModal);
+  modalCancelBtn.addEventListener('click', closeModal);
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) closeModal();
+  });
+ 
+  /* ===================== Google OAuth ===================== */
+  const GOOGLE_CLIENT_ID = "258090700636-2opa9ugsj896pm9j47imp6hj0ec1v77j.apps.googleusercontent.com";
+
+  const gSignInBtn = document.getElementById('gSignInBtn');
+  const gUser = document.getElementById('gUser');
+  const gAvatar = document.getElementById('gAvatar');
+  const gName = document.getElementById('gName');
+  const gSignOutBtn = document.getElementById('gSignOutBtn');
+
+  function updateGoogleUI(profile){
+    if (profile) {
+      gSignInBtn.style.display = 'none';
+      gUser.style.display = 'flex';
+      gAvatar.src = profile.picture;
+      gName.textContent = profile.name;
+      localStorage.setItem('bp_google_user', JSON.stringify(profile));
+    } else {
+      gSignInBtn.style.display = '';
+      gUser.style.display = 'none';
+      gAvatar.src = '';
+      gName.textContent = '';
+      localStorage.removeItem('bp_google_user');
+    }
+  }
+
+  let tokenClient = null;
+  let accessToken = null;
+
+  function initGoogle(){
+    if (GOOGLE_CLIENT_ID.startsWith('YOUR_')) return;
+    tokenClient = google.accounts.oauth2.initTokenClient({
+      client_id: GOOGLE_CLIENT_ID,
+      scope: 'openid profile email',
+      callback: (resp) => {
+        if (resp.error) return;
+        accessToken = resp.access_token;
+        fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+          headers: { Authorization: 'Bearer ' + accessToken }
+        }).then(r => r.json()).then(profile => {
+          updateGoogleUI({
+            name: profile.name,
+            picture: profile.picture,
+            email: profile.email
+          });
+        }).catch(() => {});
+      }
+    });
+  }
+
+  gSignInBtn.addEventListener('click', () => {
+    if (!tokenClient) initGoogle();
+    if (tokenClient) tokenClient.requestAccessToken();
+  });
+
+  gSignOutBtn.addEventListener('click', () => {
+    accessToken = null;
+    updateGoogleUI(null);
+    const t = STR[lang];
+    gSignInBtn.textContent = t.signIn;
+  });
+
+  const savedUser = localStorage.getItem('bp_google_user');
+  if (savedUser) {
+    try { updateGoogleUI(JSON.parse(savedUser)); } catch(e) {}
+  }
+
+  if (typeof google !== 'undefined' && google.accounts) {
+    initGoogle();
+  } else {
+    window.addEventListener('load', () => {
+      if (typeof google !== 'undefined' && google.accounts) initGoogle();
+    });
+  }
+
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      state.type = btn.dataset.type;
+      const t = STR[lang];
+      resultType.textContent = state.type === 'mod' ? t.typeMods : state.type === 'shader' ? t.typeShaders : t.typePacks;
+      resetAndSearch();
+    });
+  });
+ 
+  document.querySelectorAll('.filter-chip[data-loader]').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('.filter-chip[data-loader]').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      state.loader = chip.dataset.loader;
+      resetAndSearch();
+    });
+  });
+
+  document.querySelectorAll('.filter-chip[data-category]').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('.filter-chip[data-category]').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      state.category = chip.dataset.category;
+      resetAndSearch();
+    });
+  });
+ 
+  const searchInput = document.getElementById('searchInput');
+  let searchTimer = null;
+
+  searchInput.addEventListener('input', () => {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(() => {
+      state.query = searchInput.value.trim();
+      resetAndSearch();
+    }, 300);
+  });
+
+  document.getElementById('searchBtn').addEventListener('click', () => {
+    state.query = searchInput.value.trim();
+    resetAndSearch();
+  });
+  searchInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      clearTimeout(searchTimer);
+      state.query = e.target.value.trim();
+      resetAndSearch();
+    }
+  });
+
+  function resetAndSearch(){
+    state.offset = 0;
+    state.accum = [];
+    runSearch();
+  }
+ 
+  function modrinthFacets(){
+    const facets = [[ 'project_type:' + (state.type === 'resourcepack' ? 'resourcepack' : state.type) ]];
+    if (state.loader) facets.push(['categories:' + state.loader]);
+    if (state.category) facets.push(['categories:' + state.category]);
+    return encodeURIComponent(JSON.stringify(facets));
+  }
+ 
+  async function fetchModrinth(){
+    const url = `https://api.modrinth.com/v2/search?query=${encodeURIComponent(state.query)}&limit=${state.limit}&offset=${state.offset}&facets=${modrinthFacets()}`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('Modrinth ' + res.status);
+    const data = await res.json();
+    return {
+      total: data.total_hits || 0,
+      hits: (data.hits || []).map(h => ({
+        source: 'modrinth',
+        id: h.project_id,
+        title: h.title,
+        description: h.description,
+        icon: h.icon_url,
+        downloads: h.downloads,
+        author: h.author,
+        url: `https://modrinth.com/${h.project_type}/${h.slug}`
+      }))
+    };
+  }
+ 
+  async function fetchCurseForge(){
+    if (!CF_PROXY_URL && !state.cfKey) return { total: 0, hits: [] };
+    const classId = state.type === 'shader' ? 6552 : state.type === 'resourcepack' ? 12 : 6;
+    const params = new URLSearchParams({
+      gameId: '432',
+      classId: String(classId),
+      pageSize: String(state.limit),
+      index: String(state.offset)
+    });
+    if (state.query) params.set('searchFilter', state.query);
+ 
+    let res;
+    if (CF_PROXY_URL) {
+      res = await fetch(`${CF_PROXY_URL}/search?${params.toString()}`);
+    } else {
+      res = await fetch(`https://api.curseforge.com/v1/mods/search?${params.toString()}`, {
+        headers: { 'x-api-key': state.cfKey, 'Accept': 'application/json' }
+      });
+    }
+    if (!res.ok) throw new Error('CurseForge ' + res.status);
+    const data = await res.json();
+    return {
+      total: (data.pagination && data.pagination.totalCount) || 0,
+      hits: (data.data || []).map(m => ({
+        source: 'curseforge',
+        id: m.id,
+        title: m.name,
+        description: m.summary,
+        icon: m.logo ? m.logo.thumbnailUrl : null,
+        downloads: m.downloadCount,
+        author: (m.authors && m.authors[0] && m.authors[0].name) || 'Unknown',
+        url: m.links ? m.links.websiteUrl : '#'
+      }))
+    };
+  }
+ 
+  async function runSearch(isLoadMore){
+    const t = STR[lang];
+    if (!isLoadMore) {
+      resultsArea.innerHTML = `<div class="loading"><div class="spinner"></div><span>${state.cfKey ? t.loadingTextBoth : t.loadingText}</span></div>`;
+    }
+    loadMoreBtn.style.display = 'none';
+ 
+    try {
+      const tasks = [fetchModrinth()];
+      if (CF_PROXY_URL || state.cfKey) tasks.push(fetchCurseForge().catch(() => ({ total: 0, hits: [] })));
+      const results = await Promise.all(tasks);
+ 
+      let allHits = [];
+      let total = 0;
+      results.forEach(r => { allHits = allHits.concat(r.hits); total += r.total; });
+ 
+      state.accum = state.accum.concat(allHits);
+      state.total = total;
+ 
+      renderResults();
+    } catch (err) {
+      if (!isLoadMore) resultsArea.innerHTML = `<div class="error">${t.errorPrefix} ${err.message}. ${t.errorSuffix}</div>`;
+    }
+  }
+ 
+  function renderResults(){
+    const t = STR[lang];
+    resultCount.textContent = state.total.toLocaleString(lang === 'ar' ? 'ar-EG' : 'en-US');
+    if (state.accum.length === 0) {
+      resultsArea.innerHTML = `<div class="empty">${t.empty}</div>`;
+      loadMoreBtn.style.display = 'none';
+      return;
+    }
+    resultsArea.innerHTML = `<div class="grid">${state.accum.map(item => cardHtml(item, t)).join('')}</div>`;
+    loadMoreBtn.style.display = state.accum.length < state.total ? 'block' : 'none';
+    loadMoreBtn.textContent = t.loadMore;
+ 
+    document.querySelectorAll('.download-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const idx = parseInt(btn.dataset.index);
+        if (!isNaN(idx) && state.accum[idx]) {
+          openDownloadModal(state.accum[idx]);
+        }
+      });
+    });
+  }
+ 
+  function cardHtml(item, t){
+    const i = state.accum.indexOf(item);
+    const icon = item.icon
+      ? `<img class="card-icon" src="${item.icon}" alt="" loading="lazy" onerror="this.style.display='none'">`
+      : `<div class="card-icon"></div>`;
+    const tag = item.source === 'modrinth'
+      ? `<span class="tag-src tag-modrinth">MODRINTH</span>`
+      : `<span class="tag-src tag-curseforge">CURSEFORGE</span>`;
+    return `
+      <a class="card" href="${item.url}" target="_blank" rel="noopener">
+        ${icon}
+        <div class="card-body">
+          <div class="card-title">${escapeHtml(item.title)}</div>
+          <div class="card-desc">${escapeHtml(item.description || '')}</div>
+          <div class="card-meta">
+            ${tag}
+            <span>↓ ${formatNum(item.downloads)}</span>
+            <span>${t.byAuthor} ${escapeHtml(item.author || '')}</span>
+          </div>
+          <button class="download-btn" data-index="${i}" data-i18n="downloadBtn">${t.downloadBtn}</button>
+        </div>
+      </a>`;
+  }
+ 
+  function formatNum(n){
+    n = n || 0;
+    if (n >= 1e6) return (n/1e6).toFixed(1) + 'M';
+    if (n >= 1e3) return (n/1e3).toFixed(1) + 'k';
+    return String(n);
+  }
+  function escapeHtml(s){
+    return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+ 
+  loadMoreBtn.addEventListener('click', () => {
+    state.offset += state.limit;
+    runSearch(true);
+  });
+ 
+  applyLang();
+  runSearch();
+})();
+</script>
+ 
+</body>
+</html>
